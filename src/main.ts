@@ -1,6 +1,6 @@
 import puppeteer, { Page } from "puppeteer";
 
-const broswer = await puppeteer.launch({ headless: false });
+const broswer = await puppeteer.launch();
 const page = await broswer.newPage();
 page.goto("https://www.douyin.com");
 
