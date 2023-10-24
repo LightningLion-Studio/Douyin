@@ -1,0 +1,12 @@
+{
+  "name": "douyin",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc && node dist/main"
+  },
+  "dependencies": {
+    "puppeteer": "^21.4.0"
+  }
+}
