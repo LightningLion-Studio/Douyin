@@ -4,10 +4,14 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc && node dist/main"
+    "dev": "tsc && node dist/main",
+    "start": "tsc && pm2 start dist/main.js --name Douyin",
+    "stop": "pm2 delete Douyin"
   },
   "dependencies": {
     "@types/node": "^20.8.8",
-    "puppeteer": "^21.4.0"
+    "mysql2": "^3.6.2",
+    "puppeteer": "^21.4.0",
+    "typeorm": "^0.3.17"
   }
 }

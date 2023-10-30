@@ -1,50 +1,34 @@
-import puppeteer, { Page } from "puppeteer";
+import { DataSource } from "typeorm";
+import { Video } from "./databases/id.entity.js";
+import { getResult } from "./douyin.js";
 
-const broswer = await puppeteer.launch();
-const page = await broswer.newPage();
-page.goto("https://www.douyin.com");
-
-class Douyin {
-  constructor(private readonly page: Page) {
-    this.closeLogin();
-  }
-
-  private async closeLogin() {
-    const waiter = await this.page.waitForSelector(".dy-account-close");
-    waiter.click();
-  }
-
-  public async onClickNext<T>(callBack: () => T): Promise<true> {
-    return new Promise(async (resolve) => {
-      const waiter = await this.page.waitForSelector(
-        ".xgplayer-playswitch-next"
-      );
-      let count = 1;
-      const interval = setInterval(async () => {
-        await waiter.click();
-        await callBack();
-        count++;
-        if (count > 5) {
-          clearInterval(interval);
-          resolve(true);
-        }
-      }, 1000);
-    });
-  }
-}
-
-const douyin = new Douyin(page);
-const realResult: string[] = [];
-
-await douyin.onClickNext(async () => {
-  const selector = await page.$$("div[data-e2e-vid]");
-  for (let i = 0; i < selector.length; i++) {
-    const item = selector[i];
-    const result: string = await item.evaluate((node) => {
-      return node.attributes["data-e2e-vid"].value;
-    });
-    realResult.push(result);
-  }
+const dataSource = new DataSource({
+  type: "mysql",
+  host: "gz-cynosdbmysql-grp-4ywssxjx.sql.tencentcdb.com",
+  port: 25018,
+  username: "community",
+  password: "Gh14789632",
+  database: "douyin",
+  synchronize: true,
+  logging: true,
+  entities: [Video],
 });
+await dataSource.initialize();
 
-console.log([...new Set(realResult)]);
+const interval = async () => {
+  const value = await getResult();
+  const repository = dataSource.getRepository(Video);
+
+  for (let i = 0; i < value.length; i++) {
+    const checkVideo = await repository.findOneBy({
+      videoID: value[i],
+    });
+    if (checkVideo) continue;
+
+    const video = new Video();
+    video.videoID = value[i];
+    await dataSource.getRepository(Video).save(video);
+  }
+};
+
+setInterval(interval, 10000);

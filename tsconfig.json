@@ -4,6 +4,8 @@
     "sourceMap": true,
     "outDir": "dist",
     "target": "ES2017",
-    "module": "NodeNext"
+    "module": "NodeNext",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   }
 }
