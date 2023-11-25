@@ -7,7 +7,10 @@ import { Interval } from "./more";
 async function bootStrap() {
   await dataSource.initialize();
   const Repository = dataSource.getRepository(Share);
-  const broswer = await puppeteer.launch({ headless: false });
+  const broswer = await puppeteer.launch({
+    headless: false,
+    args: ["--no-sandbox"],
+  });
 
   Interval(() => {
     new Douyin(async (datas) => {
