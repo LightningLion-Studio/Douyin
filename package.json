@@ -1,0 +1,17 @@
+{
+  "name": "douyin-v3",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "tsc && node dist/main"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mysql2": "^3.6.5",
+    "puppeteer": "^21.5.2",
+    "typeorm": "^0.3.17",
+    "typescript": "^5.3.2"
+  }
+}
