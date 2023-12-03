@@ -1,7 +1,9 @@
-import puppeteer, { Browser, Page } from "puppeteer";
+import type { Browser, Page } from "puppeteer";
+import { Closer } from "./closer";
 
 export class Douyin {
   private page: Page;
+  private closer: Closer = new Closer();
 
   constructor(
     private readonly imgCallBack: (alts: string[]) => void | Promise<void>,
@@ -9,36 +11,6 @@ export class Douyin {
     private readonly interval: number = 3000
   ) {
     this.init();
-  }
-
-  private async closeLogin() {
-    try {
-      const waiter = await this.page.waitForSelector(".dy-account-close");
-      await waiter.click();
-      this.closeLogin();
-    } catch (error) {
-      this.closeLogin();
-    }
-  }
-
-  private async closeVerify() {
-    try {
-      const waiter = await this.page.waitForSelector(".verify-bar-close");
-      await waiter.click();
-      this.closeVerify();
-    } catch (error) {
-      this.closeVerify();
-    }
-  }
-
-  private async closeVerifyV2() {
-    try {
-      const waiter = await this.page.waitForSelector(".vc-captcha-close-btn");
-      await waiter.click();
-      this.closeVerifyV2();
-    } catch (error) {
-      this.closeVerifyV2();
-    }
   }
 
   private async clickNext() {
@@ -58,13 +30,19 @@ export class Douyin {
   }
 
   private async init() {
+    // 创建一个新的页面
     this.page = await this.browser.newPage();
+    // 前往抖音网页
     await this.page.goto("https://www.douyin.com/");
-    this.closeLogin();
-    this.closeVerify();
-    this.closeVerifyV2();
+    // 关闭登录弹窗
+    this.closer.begin(this.page, ".dy-account-close");
+    // 关闭老版验证弹窗
+    this.closer.begin(this.page, ".verify-bar-close");
+    // 关闭新版验证弹窗
+    this.closer.begin(this.page, ".vc-captcha-close-btn");
 
     setInterval(async () => {
+      // 点击分享按钮
       const shareButton = await this.page.$$(
         'div[data-e2e="video-player-share"]'
       );
