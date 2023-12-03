@@ -31,6 +31,16 @@ export class Douyin {
     }
   }
 
+  private async closeVerifyV2() {
+    try {
+      const waiter = await this.page.waitForSelector(".vc-captcha-close-btn");
+      await waiter.click();
+      this.closeVerifyV2();
+    } catch (error) {
+      this.closeVerifyV2();
+    }
+  }
+
   private async clickNext() {
     const waiter = await this.page.waitForSelector(".xgplayer-playswitch-next");
     await waiter.click();
@@ -52,6 +62,7 @@ export class Douyin {
     await this.page.goto("https://www.douyin.com/");
     this.closeLogin();
     this.closeVerify();
+    this.closeVerifyV2();
 
     setInterval(async () => {
       const shareButton = await this.page.$$(

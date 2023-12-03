@@ -22,6 +22,6 @@ async function bootStrap() {
         await Repository.save(newShare);
       }
     }, broswer);
-  }, 5);
+  }, 1);
 }
 bootStrap();
