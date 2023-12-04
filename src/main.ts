@@ -3,6 +3,7 @@ import { dataSource } from "./datasource";
 import { Douyin } from "./douyin";
 import { Share } from "./share.entity";
 import { Interval } from "./more";
+import { Checker } from "./checker";
 
 async function bootStrap() {
   await dataSource.initialize();
@@ -12,8 +13,12 @@ async function bootStrap() {
     args: ["--no-sandbox"],
   });
 
+  setInterval(async () => {
+    await Checker.check(Repository);
+  }, 60 * 1000);
+
   Interval(() => {
-    new Douyin(async (datas) => {
+    new Douyin(async datas => {
       for (const item of datas) {
         const share = await Repository.findOneBy({ share: item });
         if (share) continue;
